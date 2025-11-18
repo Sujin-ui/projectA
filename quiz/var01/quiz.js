@@ -13,17 +13,17 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   let currentIndex = 0;
+  let score = 0; // ✅ 점수 변수
   const quizArea = document.getElementById("quizArea");
   const message = document.getElementById("message");
+  const scoreBoard = document.getElementById("scoreBoard"); // 점수 표시 영역
 
   function showQuiz(index) {
     const quiz = quizzes[index];
     if (!quiz) return;
 
-    // 기존 내용 제거
     quizArea.innerHTML = "";
 
-    // 문제 영역 생성
     const quizDiv = document.createElement("div");
     quizDiv.className = "quiz";
 
@@ -50,22 +50,28 @@ document.addEventListener("DOMContentLoaded", () => {
   function checkAnswer(selected, correct) {
     if (selected === correct) {
       message.textContent = "✅ 정답입니다!";
+      score++; // ✅ 정답일 때만 점수 증가
     } else {
-      message.textContent = "❌ 오답입니다!";
+      message.textContent = `❌ 오답입니다! 정답은 "${correct}" 입니다.`;
     }
 
-    setTimeout(() => {
+    const nextBtn = document.createElement("button");
+    nextBtn.textContent = "다음 ▶";
+    nextBtn.addEventListener("click", () => {
       currentIndex++;
       if (currentIndex < quizzes.length) {
         showQuiz(currentIndex);
       } else {
         quizArea.innerHTML = "";
         const endMsg = document.createElement("h2");
-        endMsg.textContent = "퀴즈가 끝났습니다 🎉";
+        endMsg.textContent = `퀴즈가 끝났습니다 🎉 총점: ${score}점 / ${quizzes.length}문제`;
         quizArea.appendChild(endMsg);
         message.textContent = "";
+        nextBtn.style.display = "none";
       }
-    }, 1200);
+    });
+
+    quizArea.appendChild(nextBtn);
   }
 
   showQuiz(currentIndex);
