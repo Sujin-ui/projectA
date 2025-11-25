@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
   const quizzes = [
     {
@@ -9,7 +10,22 @@ document.addEventListener("DOMContentLoaded", () => {
       question: "2. HTML에서 링크를 만들 때 사용하는 태그는?",
       options: ["<link>", "<a>", "<href>", "<url>"],
       answer: "<a>"
-    }
+    },
+    {
+        question: "대한민국의 수도는 어디인가요?",
+        options: ["서울", "인천", "부산", "대전"],
+        answer: "서울"
+    },
+    {
+        questions: "지구가 태양 주위를 한 바퀴 도는 데 걸리는 시간은?",
+        options: ["약 24시간", "약 7일", "약 30일", "약 365일"],
+        answer: "약 365일"
+      },
+      {
+        questions: "한글을 창제한 왕은 누구인가요?",
+        options: ["세종", "태조", "영조", "정조"],
+        answer: "세종"
+      }
   ];
 
   let currentIndex = 0;
@@ -18,11 +34,25 @@ document.addEventListener("DOMContentLoaded", () => {
   const message = document.getElementById("message");
   const scoreBoard = document.getElementById("scoreBoard"); // 점수 표시 영역
 
+  // 이미 출제된 문제 인덱스를 기록
+  let usedIndexes = [];
+
+  // 랜덤 인덱스 뽑기 (중복 방지)
+  function getRandomIndex() {
+    if (usedIndexes.length === quizzes.length) return null; // 모든 문제 소진
+    let idx;
+    do {
+      idx = Math.floor(Math.random() * quizzes.length);
+    } while (usedIndexes.includes(idx));
+    usedIndexes.push(idx);
+    return idx;
+  }
+
   function showQuiz(index) {
     const quiz = quizzes[index];
     if (!quiz) return;
 
-        // 기존 내용 제거
+    // 기존 내용 제거
     quizArea.innerHTML = "";
 
     // 문제 영역 생성
@@ -88,5 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
     quizArea.appendChild(nextBtn);
   }
 
+  // 시작할 때 첫 문제 랜덤으로 뽑기
+  const firstIndex = getRandomIndex();
   showQuiz(currentIndex);
 });
