@@ -22,8 +22,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const quiz = quizzes[index];
     if (!quiz) return;
 
+        // 기존 내용 제거
     quizArea.innerHTML = "";
 
+    // 문제 영역 생성
     const quizDiv = document.createElement("div");
     quizDiv.className = "quiz";
 
@@ -37,12 +39,24 @@ document.addEventListener("DOMContentLoaded", () => {
       const li = document.createElement("li");
       li.className = "option";
       li.textContent = option;
-      li.addEventListener("click", () => checkAnswer(option, quiz.answer));
+      // 클릭 후 중복 선택 방지: once + 선택 후 전체 비활성화
+      li.addEventListener("click", () => {
+        checkAnswer(option, quiz.answer);
+        // 모든 보기 클릭 비활성화
+        ul.querySelectorAll(".option").forEach(opt => {
+          opt.style.pointerEvents = "none"; // 더 이상 클릭 불가
+          opt.style.opacity = "0.7";        // 시각적 비활성화
+        });
+      }, { once: true });
+
       ul.appendChild(li);
+
     });
 
     quizDiv.appendChild(ul);
     quizArea.appendChild(quizDiv);
+
+    
 
     message.textContent = "";
   }
