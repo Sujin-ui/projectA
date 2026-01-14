@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>간단한 퀴즈</title>
+
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      margin: 0;
+      background: #f6fbff;
+      color: #222;
+    }
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 24px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    }
+    h1 { text-align: center; margin-bottom: 20px; }
+    .quiz { margin-bottom: 24px; }
+    .quiz h2 { font-size: 18px; margin-bottom: 10px; }
+    ul { list-style: none; padding: 0; margin: 0; }
+    .option {
+      background: #eee;
+      margin: 8px 0;
+      padding: 10px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background .25s, transform .08s, box-shadow .2s;
+      outline: none;
+    }
+    .option:hover { background: #dff3ff; transform: translateY(-2px); }
+    /* 정답 표시 색상은 사용하지 않음 */
+    .correct { background: #eee; }
+
+    /* 선택 상태 스타일 */
+    .selected {
+      background: #cfe9ff;
+      box-shadow: 0 0 0 2px #66b2ff inset;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .btn {
+      appearance: none;
+      border: none;
+      background: #1677ff;
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background .2s, transform .06s;
+    }
+    .btn:hover { background: #1468db; }
+    .btn:active { transform: translateY(1px); }
+
+    .message {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #1677ff;
+    }
+    /* 키보드 접근성: 포커스 스타일 */
+    .option:focus-visible {
+      box-shadow: 0 0 0 3px rgba(22,119,255,0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌟 간단한 퀴즈</h1>
+
+    <section class="quiz" data-quiz-id="q1">
+      <h2>1. 지구에서 가장 큰 대륙은?</h2>
+      <ul role="listbox" aria-label="지구에서 가장 큰 대륙은?">
+        <li class="option" role="option" tabindex="0">아프리카</li>
+        <li class="option" role="option" tabindex="0">유럽</li>
+        <li class="option" role="option" tabindex="0">아시아</li>
+        <li class="option" role="option" tabindex="0">남아메리카</li>
+      </ul>
+    </section>
+
+    <section class="quiz" data-quiz-id="q2">
+      <h2>2. HTML에서 링크를 만들 때 사용하는 태그는?</h2>
+      <ul role="listbox" aria-label="HTML에서 링크를 만들 때 사용하는 태그는?">
+        <li class="option" role="option" tabindex="0">&lt;link&gt;</li>
+        <li class="option" role="option" tabindex="0">&lt;a&gt;</li>
+        <li class="option" role="option" tabindex="0">&lt;href&gt;</li>
+        <li class="option" role="option" tabindex="0">&lt;url&gt;</li>
+      </ul>
+    </section>
+
+    <div class="actions">
+      <button class="btn" id="submitBtn">선택 제출</button>
+      <button class="btn" id="resetBtn" style="background:#555;">초기화</button>
+    </div>
+
+    <div class="message" id="message" aria-live="polite"></div>
+  </div>
+
+  <script>
+    // 각 문항에서 하나만 선택되도록 처리
+    document.querySelectorAll('.quiz').forEach(section => {
+      const options = section.querySelectorAll('.option');
+
+      options.forEach(opt => {
+        opt.addEventListener('click', () => {
+          options.forEach(o => o.classList.remove('selected'));
+          opt.classList.add('selected');
+        });
+
+        // 키보드 접근성: Enter/Space로 선택
+        opt.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            options.forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+          }
+        });
+      });
+    });
+
+    // 제출 버튼: 선택된 항목 요약만 표시 (정답 공개/채점 없음)
+    const submitBtn = document.getElementById('submitBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const message = document.getElementById('message');
+
+    submitBtn.addEventListener('click', () => {
+      const summaries = [];
+      document.querySelectorAll('.quiz').forEach((section, idx) => {
+        const selected = section.querySelector('.option.selected');
+        const qNum = idx + 1;
+        const text = selected ? selected.textContent.trim() : '선택 없음';
+        summaries.push(`Q${qNum}: ${text}`);
+      });
+      message.textContent = `선택 완료 — ${summaries.join(' / ')}`;
+    });
+
+    // 초기화 버튼: 모든 선택 해제
+    resetBtn.addEventListener('click', () => {
+      document.querySelectorAll('.option.selected').forEach(o => o.classList.remove('selected'));
+      message.textContent = '';
+    });
+  </script>
+</body>
+</html>
